@@ -1,0 +1,13 @@
+README.md
+pyproject.toml
+setup.py
+ai_talent_sourcing_agent.egg-info/PKG-INFO
+ai_talent_sourcing_agent.egg-info/SOURCES.txt
+ai_talent_sourcing_agent.egg-info/dependency_links.txt
+ai_talent_sourcing_agent.egg-info/entry_points.txt
+ai_talent_sourcing_agent.egg-info/requires.txt
+ai_talent_sourcing_agent.egg-info/top_level.txt
+src/__init__.py
+src/sourcing_agent.py
+tests/__init__.py
+tests/test_sourcing_agent.py

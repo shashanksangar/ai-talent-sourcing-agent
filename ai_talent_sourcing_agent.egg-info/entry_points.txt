@@ -1,0 +1,3 @@
+[console_scripts]
+sourcing-agent = src.sourcing_agent:main
+

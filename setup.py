@@ -8,6 +8,8 @@ setup(
         "anthropic",
         "requests",
         "python-dotenv",
+        "feedparser",
+        "pyyaml",
     ],
     entry_points={
         "console_scripts": [
