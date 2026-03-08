@@ -1,0 +1,28 @@
+# Configuration for AI Talent Sourcing Agent
+
+# Sourcing parameters
+platforms:
+  - linkedin
+  - github
+  - arxiv
+
+keywords:
+  - "machine learning"
+  - "deep learning"
+  - "computer vision"
+  - "AI research"
+
+# Filtering criteria
+min_experience_years: 3
+required_skills:
+  - python
+  - pytorch
+  - tensorflow
+
+# Output settings
+output_format: json
+database_path: data/candidates.db
+
+# Scheduling
+daily_scan_enabled: true
+scan_interval_hours: 24
