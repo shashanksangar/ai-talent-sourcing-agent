@@ -2,7 +2,7 @@
 """
 AI Talent Sourcing Agent
 
-An agentic tool for automated candidate sourcing.
+An agentic tool for automated candidate sourcing with AI evaluation.
 """
 
 import argparse
@@ -121,6 +121,23 @@ class SourcingAgent:
         
         return details
     
+    def evaluate_with_ai(self, candidate: dict, job_requirements: dict):
+        """
+        Evaluate a candidate using Claude AI.
+        
+        Args:
+            candidate: Candidate profile
+            job_requirements: Job details
+        
+        Returns:
+            Evaluation results
+            
+        Note: Requires importing and using the AIEvaluator separately
+        See example_with_evaluation.py for usage
+        """
+        logger.info(f"To evaluate with Claude, use SourcingOrchestrator from src.orchestrator")
+        return None
+    
     def export_candidates(self, output_file: str = "candidates.json"):
         """
         Export discovered candidates to file.
@@ -162,9 +179,15 @@ def main():
         if args.output:
             agent.export_candidates(args.output)
             print(f"\nFull results exported to {args.output}")
+        
+        print("\n" + "=" * 60)
+        print("To evaluate candidates with AI, use:")
+        print("  from src.orchestrator import SourcingOrchestrator")
+        print("  See example_with_evaluation.py for complete pipeline")
     else:
         print("Sourcing agent initialized. Ready for operation.")
         print("Usage: sourcing-agent --query '<search query>' [--platforms github,arxiv] [--output results.json]")
+        print("\nFor AI evaluation pipeline, use: python example_with_evaluation.py")
 
 if __name__ == "__main__":
     main()

@@ -9,5 +9,14 @@ ai_talent_sourcing_agent.egg-info/requires.txt
 ai_talent_sourcing_agent.egg-info/top_level.txt
 src/__init__.py
 src/sourcing_agent.py
+src/api/__init__.py
+src/api/arxiv_client.py
+src/api/base_client.py
+src/api/github_client.py
+src/api/linkedin_client.py
+src/models/__init__.py
+src/models/candidate.py
+src/utils/__init__.py
+src/utils/config.py
 tests/__init__.py
 tests/test_sourcing_agent.py
