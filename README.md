@@ -1,17 +1,51 @@
 # AI Talent Sourcing Agent
 
-An agentic AI-powered tool for automating candidate sourcing in the recruiting process. This project focuses on intelligent discovery and initial outreach for top talent in AI/ML fields.
+An agentic AI-powered tool for finding and evaluating candidates. Combines multiple data sources (GitHub, ArXiv, LinkedIn) with Claude AI for intelligent candidate assessment.
+
+**🌟 Perfect for:** Quick candidate discovery, AI-powered evaluation, team dashboards
+
+## ⚡ Quick Start (Choose Your Interface)
+
+### 1️⃣ Interactive CLI (Fastest for Terminal Users)
+```bash
+python interactive_cli.py
+# Menu-driven interface with prompts
+# Search → Evaluate → Export
+```
+
+### 2️⃣ Web Dashboard (Best for Teams)
+```bash
+python app.py
+# Open: http://localhost:5000
+# Search, evaluate, and export in your browser
+```
+
+### 3️⃣ Python API (For Developers)
+```python
+from src.orchestrator import SourcingOrchestrator
+
+orchestrator = SourcingOrchestrator()
+results = orchestrator.find_and_evaluate_candidates(
+    search_query="machine learning researcher",
+    job_requirements={"title": "ML Engineer", "required_skills": ["PyTorch"]},
+    platforms=['arxiv', 'github'],
+    limit=5
+)
+```
 
 ## Features
 
-- **Automated Sourcing**: AI-driven search for potential candidates across platforms
-- **Intelligent Filtering**: Pre-screening based on skills, experience, and fit
-- **Daily Scans**: Automated workflows for continuous talent monitoring
-- **Integration Ready**: Works with existing recruiting pipelines
+- ✅ **Interactive CLI Interface** - Menu-driven terminal UI with rich prompts
+- ✅ **Web Dashboard** - Beautiful HTML/CSS interface with real-time results
+- ✅ **Intelligent Discovery** - Search across GitHub, ArXiv, LinkedIn
+- ✅ **AI Evaluation** - Claude Sonnet scores and ranks candidates
+- ✅ **Tesla Bottlerocket Integration** - Powered by GCP Vertex AI
+- ✅ **One-Click Export** - JSON results for reporting
+- ✅ **Result Caching** - View and manage past searches
 
 ## Installation
 
-1. Clone the repository:
+1. Clone and setup:
 ```bash
 git clone https://github.com/shashanksangar/ai-talent-sourcing-agent.git
 cd ai-talent-sourcing-agent
@@ -19,25 +53,127 @@ cd ai-talent-sourcing-agent
 
 2. Install dependencies:
 ```bash
-pip install -e .
+pip install flask anthropic requests python-dotenv feedparser pyyaml
 ```
 
-3. Configure environment:
+3. Configure credentials:
 ```bash
+# Copy example and add your Tesla Bottlerocket credentials
 cp .env.example .env
-# Add your API keys and configurations
+nano .env  # Add your API tokens
 ```
 
-## Usage
+## Usage Guide
 
+### 📖 Complete Documentation
+See [`USAGE.md`](USAGE.md) for detailed guides:
+- CLI interface tutorial
+- Web dashboard walkthrough
+- API examples
+- Configuration options
+- Troubleshooting
+
+### CLI Examples
+
+**Search for candidates:**
 ```bash
-sourcing-agent --config config.yaml
+python interactive_cli.py
+# Select: 1 (Search)
+# Query: "deep learning researcher"
+# Platforms: arxiv,github
+# Limit: 10
 ```
+
+**Find and evaluate (complete pipeline):**
+```bash
+python interactive_cli.py
+# Select: 3 (Find & Evaluate)
+# Query: "ML engineer"
+# Job: "Senior ML Engineer"
+# Required Skills: "Python, PyTorch, Research"
+```
+
+**Export results:**
+```bash
+python interactive_cli.py
+# Select: 5 (Export)
+# Filename: candidates_march.json
+```
+
+### Web Dashboard Examples
+
+**Start server:**
+```bash
+python app.py
+# Open: http://localhost:5000
+```
+
+**Complete Pipeline workflow:**
+1. Go to "⚡ Complete Pipeline" tab
+2. Enter search query: "computer vision engineer"
+3. Enter job title: "CV Lead"
+4. Add required skills: "CNN, Object Detection"
+5. Click "Run Complete Pipeline"
+6. Export JSON with "📥 Export" button
 
 ## Configuration
 
-See `config.yaml` for sourcing parameters and API settings.
+### Environment Variables (.env)
+```
+ANTHROPIC_VERTEX_BASE_URL=https://inference.bottlerocket.tesla.com/...
+ANTHROPIC_AUTH_TOKEN=your_token_here
+ANTHROPIC_VERTEX_PROJECT_ID=bottle-rocket-recruiting
+```
+
+### Config File (config.yaml)
+```yaml
+ai_evaluation:
+  enabled: true
+  model: claude-sonnet-4-5
+  temperature: 0.5
+
+platforms:
+  - arxiv
+  - github
+```
+
+## Project Structure
+
+```
+ai-talent-sourcing-agent/
+├── interactive_cli.py          # CLI interface
+├── app.py                      # Web server
+├── templates/
+│   └── index.html              # Web UI
+├── src/
+│   ├── sourcing_agent.py       # Main agent
+│   ├── orchestrator.py         # Discovery + evaluation
+│   ├── ai_evaluator.py         # Claude integration
+│   ├── api/
+│   │   ├── base_client.py
+│   │   ├── github_client.py
+│   │   ├── arxiv_client.py
+│   │   └── linkedin_client.py
+│   └── models/
+├── config.yaml                 # Configuration
+├── .env                        # Credentials
+└── USAGE.md                    # Complete guide
+```
+
+## Development
+
+### Run Tests
+```bash
+python -m pytest tests/
+```
+
+### Extend with New Platforms
+See `src/api/base_client.py` for the client interface.
 
 ## Contributing
 
-Part of the AI Talent Copilot ecosystem. See main project for guidelines.
+Part of the **AI Talent Copilot** ecosystem. See the main project for contribution guidelines.
+
+## License
+
+See main project repository.
