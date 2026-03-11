@@ -98,6 +98,107 @@ class SourcingAgent:
         
         return results
     
+    def track_latest_papers(self, team_keywords: list = None, max_results: int = 20) -> list:
+        """
+        Track the latest papers relevant to the team.
+        
+        Args:
+            team_keywords: List of keywords relevant to the team (default: from config)
+            max_results: Maximum number of papers to return
+        
+        Returns:
+            List of latest relevant papers
+        """
+        team_keywords = team_keywords or self.api_config.get('keywords', ['machine learning', 'deep learning'])
+        
+        # Use the first keyword as primary search, others as additional terms
+        primary_keyword = team_keywords[0]
+        additional_terms = ' '.join(team_keywords[1:])
+        query = f"{primary_keyword} {additional_terms}".strip()
+        
+        logger.info(f"Tracking latest papers for team keywords: {team_keywords}")
+        
+        try:
+            papers = self.arxiv_client.search_papers(query, {'max_results': max_results})
+            logger.info(f"Found {len(papers)} recent papers")
+            return papers
+        except Exception as e:
+            logger.error(f"Failed to track papers: {e}")
+            return []
+    
+    def find_emerging_talent(self, research_areas: list, max_results: int = 20) -> list:
+        """
+        Find emerging AI talent in specific research areas.
+        
+        Emerging talent criteria:
+        - Recent publications (last 2 years)
+        - Limited publication history (fewer than 10 papers)
+        - Active in specified research areas
+        
+        Args:
+            research_areas: List of research areas to focus on
+            max_results: Maximum number of candidates to return
+        
+        Returns:
+            List of emerging talent profiles
+        """
+        query = ' '.join(research_areas)  # Combine research areas into search query
+        
+        logger.info(f"Finding emerging talent in: {research_areas}")
+        
+        # Search for recent papers in these areas
+        papers = self.arxiv_client.search_papers(query, {'max_results': max_results * 3})  # Get more papers to find authors
+        
+        # Extract unique authors from recent papers
+        author_papers = {}  # author -> list of their papers
+        from datetime import datetime, timedelta
+        
+        cutoff_date = datetime.now() - timedelta(days=730)  # 2 years ago
+        
+        for paper in papers:
+            pub_date_str = paper.get('published')
+            if pub_date_str:
+                try:
+                    pub_date = datetime.strptime(pub_date_str[:10], '%Y-%m-%d')
+                    if pub_date > cutoff_date:  # Only recent papers
+                        for author in paper.get('authors', []):
+                            if author not in author_papers:
+                                author_papers[author] = []
+                            author_papers[author].append(paper)
+                except ValueError:
+                    pass  # Skip if date parsing fails
+        
+        # Filter for emerging talent (fewer than 10 papers)
+        emerging_talent = []
+        for author, papers_list in author_papers.items():
+            if len(papers_list) < 10:  # Emerging talent threshold
+                # Create candidate profile
+                recent_paper = max(papers_list, key=lambda p: p.get('published', ''))
+                candidate = {
+                    "id": author,
+                    "name": author,
+                    "platform": "ArXiv",
+                    "platform_url": f"https://arxiv.org/search/?query={author}&searchtype=author",
+                    "research_interests": research_areas,
+                    "recent_paper": {
+                        "title": recent_paper.get('title'),
+                        "arxiv_id": recent_paper.get('arxiv_id'),
+                        "published": recent_paper.get('published')
+                    },
+                    "paper_count": len(papers_list),
+                    "raw_data": {
+                        "papers": papers_list
+                    }
+                }
+                emerging_talent.append(candidate)
+        
+        # Sort by recency and paper count (prefer more recent with fewer papers)
+        emerging_talent.sort(key=lambda x: (x.get('recent_paper', {}).get('published', ''), -x.get('paper_count', 0)), reverse=True)
+        emerging_talent = emerging_talent[:max_results]
+        
+        logger.info(f"Found {len(emerging_talent)} emerging talent candidates")
+        return emerging_talent
+    
     def get_candidate_details(self, platform: str, candidate_id: str) -> dict:
         """
         Fetch detailed information about a candidate.

@@ -42,6 +42,8 @@ results = orchestrator.find_and_evaluate_candidates(
 - ✅ **Tesla Bottlerocket Integration** - Powered by GCP Vertex AI
 - ✅ **One-Click Export** - JSON results for reporting
 - ✅ **Result Caching** - View and manage past searches
+- ✅ **Track Latest Papers** - Monitor cutting-edge research relevant to your team
+- ✅ **Find Emerging Talent** - Discover rising stars in specific AI research areas
 
 ## Installation
 
@@ -98,6 +100,24 @@ python interactive_cli.py
 python interactive_cli.py
 # Select: 5 (Export)
 # Filename: candidates_march.json
+```
+
+**Track latest papers for your team:**
+```bash
+python examples.py  # Run example_track_papers()
+# Or programmatically:
+from src.sourcing_agent import SourcingAgent
+agent = SourcingAgent()
+papers = agent.track_latest_papers(team_keywords=["computer vision", "transformers"])
+```
+
+**Find emerging talent in research areas:**
+```bash
+python examples.py  # Run example_emerging_talent()
+# Or programmatically:
+from src.sourcing_agent import SourcingAgent
+agent = SourcingAgent()
+talent = agent.find_emerging_talent(["natural language processing", "reinforcement learning"])
 ```
 
 ### Web Dashboard Examples

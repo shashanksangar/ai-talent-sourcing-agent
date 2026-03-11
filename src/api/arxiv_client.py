@@ -151,6 +151,56 @@ class ArXivAPIClient(BaseAPIClient):
         
         return formatted
     
+    def search_papers(self, query: str, filters: Dict[str, Any] = None) -> List[Dict[str, Any]]:
+        """
+        Search for papers on ArXiv.
+        
+        Args:
+            query: Search query
+            filters: Optional filters (max_results, category, etc.)
+        
+        Returns:
+            List of paper details
+        """
+        self._apply_rate_limit()
+        
+        filters = filters or {}
+        max_results = filters.get('max_results', 50)
+        category = filters.get('category', 'cs.AI')
+        
+        # Format ArXiv search query
+        search_query = self._format_arxiv_query(query, category)
+        
+        params = f"?search_query={search_query}&start=0&max_results={max_results}&sortBy=submittedDate&sortOrder=descending"
+        url = f"{self.BASE_URL}{params}"
+        
+        self._log_request("ArXiv", "/api/query", {"query": search_query})
+        
+        try:
+            feed = feedparser.parse(url)
+            
+            papers = []
+            for entry in feed.entries:
+                paper = {
+                    "title": entry.get('title'),
+                    "authors": [auth.get('name') for auth in entry.get('authors', [])],
+                    "published": entry.get('published'),
+                    "updated": entry.get('updated'),
+                    "summary": entry.get('summary'),
+                    "arxiv_id": entry.get('id').split('/abs/')[-1],
+                    "categories": entry.get('tags', []),
+                    "pdf_url": entry.get('id').replace('/abs/', '/pdf/'),
+                    "abs_url": entry.get('id')
+                }
+                papers.append(paper)
+            
+            self._log_response("ArXiv", "Success", len(papers))
+            return papers
+        
+        except Exception as e:
+            logger.error(f"ArXiv API error: {e}")
+            return []
+    
     def _normalize_arxiv_author(self, name: str, paper: Dict[str, Any], all_authors: List) -> Dict[str, Any]:
         """
         Normalize ArXiv author data to candidate format.

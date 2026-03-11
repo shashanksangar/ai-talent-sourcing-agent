@@ -107,6 +107,46 @@ def example_export_results():
     
     print(f"\nExported {len(agent.candidates)} candidates to {output_file}")
 
+def example_track_papers():
+    """Example 5: Track latest papers relevant to the team."""
+    print("\n" + "=" * 60)
+    print("Example 5: Track Latest Papers")
+    print("=" * 60)
+    
+    agent = SourcingAgent()
+    
+    # Track latest papers for team keywords
+    papers = agent.track_latest_papers(max_results=5)
+    
+    print(f"\nFound {len(papers)} latest relevant papers:")
+    for i, paper in enumerate(papers, 1):
+        print(f"\n{i}. {paper.get('title')}")
+        print(f"   Authors: {', '.join(paper.get('authors', []))}")
+        print(f"   Published: {paper.get('published')}")
+        print(f"   ArXiv ID: {paper.get('arxiv_id')}")
+        print(f"   URL: {paper.get('abs_url')}")
+
+def example_emerging_talent():
+    """Example 6: Find emerging AI talent."""
+    print("\n" + "=" * 60)
+    print("Example 6: Find Emerging Talent")
+    print("=" * 60)
+    
+    agent = SourcingAgent()
+    
+    # Find emerging talent in specific research areas
+    research_areas = ["computer vision", "natural language processing", "reinforcement learning"]
+    talent = agent.find_emerging_talent(research_areas, max_results=5)
+    
+    print(f"\nFound {len(talent)} emerging talent candidates:")
+    for i, candidate in enumerate(talent, 1):
+        print(f"\n{i}. {candidate.get('name')}")
+        print(f"   Platform: {candidate.get('platform')}")
+        if candidate.get('recent_paper'):
+            print(f"   Recent Paper: {candidate['recent_paper'].get('title')}")
+            print(f"   Published: {candidate['recent_paper'].get('published')}")
+        print(f"   Research Interests: {', '.join(candidate.get('research_interests', []))}")
+
 if __name__ == "__main__":
     # Run examples (uncomment as needed)
     
@@ -115,6 +155,8 @@ if __name__ == "__main__":
         example_github_search()
         example_arxiv_search()
         example_export_results()
+        example_track_papers()
+        example_emerging_talent()
         
         print("\n" + "=" * 60)
         print("All examples completed successfully!")
