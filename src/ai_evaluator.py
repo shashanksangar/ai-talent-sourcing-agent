@@ -155,7 +155,26 @@ Format as actionable talking points for a recruiter.
         context: str
     ) -> str:
         """Build the evaluation prompt for Claude."""
-        
+
+        # Check for ICRA publications
+        is_icra_author = candidate.get('is_icra_author', False)
+        icra_papers = candidate.get('icra_papers', [])
+        icra_years = candidate.get('icra_years', [])
+        icra_info = ""
+
+        if is_icra_author and icra_papers:
+            icra_info = f"""
+🏆 ICRA AUTHOR (International Conference on Robotics and Automation):
+- Published {len(icra_papers)} paper(s) at ICRA
+- ICRA Years: {', '.join(map(str, icra_years))}
+- Recent ICRA Paper: "{icra_papers[0].get('title', 'N/A')}" ({icra_papers[0].get('conference_year', 'N/A')})
+
+ICRA Publications:
+"""
+            for i, paper in enumerate(icra_papers[:3], 1):  # Show top 3
+                icra_info += f"{i}. {paper.get('title')} (ICRA {paper.get('conference_year', 'N/A')})\n   "
+                icra_info += f"Summary: {paper.get('summary', 'N/A')[:150]}...\n"
+
         candidate_summary = f"""
 CANDIDATE PROFILE:
 Name: {candidate.get('name')}
@@ -168,7 +187,7 @@ Current Company: {candidate.get('company', 'N/A')}
 
 Publications: {len(candidate.get('publications', []))} papers
 Followers/Connections: {candidate.get('followers', candidate.get('connections', 'N/A'))}
-
+{icra_info}
 Profile Summary:
 {candidate.get('bio', 'No summary available')[:500]}
 """
@@ -206,13 +225,30 @@ Be specific and cite their actual background."""
     
     def _get_system_prompt(self) -> str:
         """System prompt for candidate evaluation."""
-        return """You are an expert technical recruiter with deep knowledge of AI/ML hiring. 
+        return """You are an expert technical recruiter with deep knowledge of AI/ML and robotics hiring,
+specifically for Tesla Optimus humanoid robot development team.
+
 Your role is to objectively evaluate candidates for technical roles, considering:
 - Technical skill alignment
 - Research/domain expertise fit
 - Career trajectory and growth potential
 - Ability to impact and innovate in the role
 - Cultural and team fit indicators
+
+SPECIAL PRIORITIZATION FOR TESLA OPTIMUS:
+- **ICRA Authors**: Candidates with publications at the International Conference on Robotics and
+  Automation (ICRA) receive significant priority. ICRA is a top-tier robotics conference.
+- **Foundation Models**: Expertise in foundation models for robotics (e.g., RT-1, RT-2, PaLM-E,
+  vision-language-action models) is highly valued.
+- **End-to-End Learning**: Experience with end-to-end learning for robotic manipulation,
+  imitation learning, and behavior cloning is critical.
+- **Embodied AI**: Work on physical robot systems, sim-to-real transfer, and real-world deployment.
+
+SCORING GUIDELINES:
+- ICRA authors working on Foundation Models or End-to-End Learning: +20-30 bonus points
+- Recent ICRA publications (last 2 years): +15-20 bonus points
+- Multiple ICRA publications: +10-15 bonus points
+- Robotics + ML expertise combination: +10-15 bonus points
 
 Provide detailed, actionable evaluations that help with hiring decisions.
 Be fair and objective, highlighting both strengths and growth areas."""
